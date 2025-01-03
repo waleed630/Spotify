@@ -101,8 +101,12 @@ body {
   padding: 10px;
   border-radius: 5px;
   background: #2d2d2d;
-  width: 180px;
+  width: 220px;
   position: relative;
+  display: grid;
+  justify-content: center;
+  align-items: center;
+  justify-items: center;
 }
 
 .card > * {
@@ -327,7 +331,7 @@ body {
   .card {
     width: 90vw;
   }
-  .cardContainer{
+  .cardContainer {
     margin: 0;
   }
 }
