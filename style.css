@@ -225,6 +225,10 @@ body {
   flex: 1; /* Ensures the info section takes up remaining space */
 }
 
+.info div {
+  word-break: break-all;
+}
+
 .songList .playnow {
   display: flex;
   justify-content: center;
@@ -290,12 +294,30 @@ body {
   cursor: pointer;
 }
 
-.songinfo,
-.songtime {
+.timevol {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+}
+
+.songinfo {
   color: black;
   padding: 0 12px;
   width: 250px;
   height: 15px;
+}
+
+.songtime {
+  width: 125;
+  color: black;
+  padding: 0 12px;
+}
+
+.volume {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
 }
 
 .abovebar {
@@ -312,6 +334,12 @@ body {
     z-index: 1;
     width: 370px;
     background: black;
+    padding: 0;
+  }
+
+  .songinfo,
+  .songtime {
+    width: auto;
   }
 
   .left .close {
@@ -320,6 +348,15 @@ body {
     top: 25px;
     width: 29px;
   }
+
+  .timevol {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    flex-direction: column;
+    gap: 13px;
+  }
+
   .right {
     width: 100vw;
   }

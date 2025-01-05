@@ -133,11 +133,17 @@ async function main() {
 
   //Add an event listener to next
   next.addEventListener("click", () => {
+    currentSong.pause();
     let index = songs.indexOf(currentSong.src.split("/").slice(-1)[0]);
-    if (index + 1 > length) {
+    if (index + 1 < songs.length) {
       playMusic(songs[index + 1]);
     }
-    
   });
+
+  //Add an event to volume
+  document.querySelector(".range").getElementsByTagName("input")[0].addEventListener("change",(e)=>{
+    console.log("setting volume to",e.target.value,"/100")
+    currentSong.volume=parseInt(e.target.value)/100
+  })
 }
 main();
