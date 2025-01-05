@@ -6,6 +6,10 @@
   font-family: "Roboto", sans-serif;
 }
 
+.close {
+  display: none;
+}
+
 body {
   background: #000;
   color: white;
@@ -81,6 +85,10 @@ body {
 }
 
 .spotifyPlaylists {
+  padding: 16px;
+}
+
+.spotifyPlaylists h1 {
   padding: 16px;
 }
 
@@ -286,6 +294,8 @@ body {
 .songtime {
   color: black;
   padding: 0 12px;
+  width: 250px;
+  height: 15px;
 }
 
 .abovebar {
@@ -325,6 +335,10 @@ body {
     display: block;
   }
 
+  .right {
+    margin: 0;
+  }
+
   .songbuttons img {
     width: 10vw;
   }
@@ -333,5 +347,13 @@ body {
   }
   .cardContainer {
     margin: 0;
+  }
+  .close {
+    display: block;
+  }
+  .abovebar {
+    flex-direction: column;
+    gap: 23px;
+    align-items: center;
   }
 }
