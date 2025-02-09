@@ -2,6 +2,7 @@ console.log("Lets write JS");
 
 let currentSong = new Audio();
 let songs;
+let currFolder;
 
 function secondsToMinutesSeconds(seconds) {
   if (isNaN(seconds) || seconds < 0) {
@@ -17,62 +18,43 @@ function secondsToMinutesSeconds(seconds) {
   return `${formattedMinutes}:${formattedSeconds}`;
 }
 
-async function getSongs() {
-  let a = await fetch("http://127.0.0.1:5500/songs/");
+async function getSongs(folder) {
+  currFolder = folder;
+  let a = await fetch(`http://127.0.0.1:5500/${folder}/`);
   let response = await a.text();
-  console.log(response);
-
   let div = document.createElement("div");
   div.innerHTML = response;
   let as = div.getElementsByTagName("a");
-  console.log(as);
-  let songs = [];
+  songs = [];
   for (let index = 0; index < as.length; index++) {
     const element = as[index];
     if (element.href.endsWith(".mp3")) {
-      songs.push(element.href.split("/songs/")[1]);
+      songs.push(element.href.split(`/${folder}/`)[1]);
     }
   }
-  return songs;
-}
-
-const playMusic = (track, pause = false) => {
-  //let audio=new Audio("/songs/"+track)
-  currentSong.src = "/songs/" + track;
-  if (!pause) {
-    currentSong.play();
-    play.src = "pause.svg";
-  }
-  document.querySelector(".songinfo").innerHTML = decodeURI(track);
-  document.querySelector(".songtime").innerHTML = "00:00/00:00";
-};
-
-async function main() {
-  //get the list of the songs
-  songs = await getSongs();
-  playMusic(songs[0], true);
 
   //show all the songs in the
   let songUL = document
     .querySelector(".songList")
     .getElementsByTagName("ul")[0];
+    songUL.innerHTML=""
   for (const song of songs) {
     songUL.innerHTML =
       songUL.innerHTML +
       `<li>
-      
-                <img class="invert" src="music.svg" alt="" />
-                <div class="info">
-                  <div>${song.replaceAll("%20", " ")}</div>
-                  <div>Waleed</div>
-                </div>
-                <div class="playnow">
-                  <span>Play Now</span>
-                  <img class="invert" src="play.svg" alt="" />
-                </div>
+  
+            <img class="invert" src="music.svg" alt="" />
+            <div class="info">
+              <div>${song.replaceAll("%20", " ")}</div>
+              <div>Waleed</div>
+            </div>
+            <div class="playnow">
+              <span>Play Now</span>
+              <img class="invert" src="play.svg" alt="" />
+            </div>
 
 
-      </li>`;
+  </li>`;
   }
   //Attach an event listner to each song
   Array.from(
@@ -83,6 +65,23 @@ async function main() {
       playMusic(e.querySelector(".info").firstElementChild.innerHTML.trim());
     });
   });
+}
+
+const playMusic = (track, pause = false) => {
+  //let audio=new Audio("/songs/"+track)
+  currentSong.src = `/${currFolder}/` + track;
+  if (!pause) {
+    currentSong.play();
+    play.src = "pause.svg";
+  }
+  document.querySelector(".songinfo").innerHTML = decodeURI(track);
+  document.querySelector(".songtime").innerHTML = "00:00/00:00";
+};
+
+async function main() {
+  //get the list of the songs
+  await getSongs("songs/ncs");
+  playMusic(songs[0], true);
 
   //attach an event listner to play next and previous
 
@@ -141,9 +140,20 @@ async function main() {
   });
 
   //Add an event to volume
-  document.querySelector(".range").getElementsByTagName("input")[0].addEventListener("change",(e)=>{
-    console.log("setting volume to",e.target.value,"/100")
-    currentSong.volume=parseInt(e.target.value)/100
-  })
+  document
+    .querySelector(".range")
+    .getElementsByTagName("input")[0]
+    .addEventListener("change", (e) => {
+      console.log("setting volume to", e.target.value, "/100");
+      currentSong.volume = parseInt(e.target.value) / 100;
+    });
+
+  //Load the playlist whenever the card is clicked
+  Array.from(document.getElementsByClassName("card")).forEach((e) => {
+    e.addEventListener("click", async (item) => {
+      console.log(item, item.currentTarget.dataset);
+      songs = await getSongs(`songs/${item.currentTarget.datasetfolder}`);
+    });
+  });
 }
 main();
