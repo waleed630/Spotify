@@ -1,5 +1,3 @@
-console.log("Lets write JS");
-
 let currentSong = new Audio();
 let songs;
 let currFolder;
@@ -37,7 +35,7 @@ async function getSongs(folder) {
   let songUL = document
     .querySelector(".songList")
     .getElementsByTagName("ul")[0];
-    songUL.innerHTML=""
+  songUL.innerHTML = "";
   for (const song of songs) {
     songUL.innerHTML =
       songUL.innerHTML +
@@ -61,7 +59,6 @@ async function getSongs(folder) {
     document.querySelector(".songList").getElementsByTagName("li")
   ).forEach((e) => {
     e.addEventListener("click", (element) => {
-      console.log(e.querySelector(".info").firstElementChild.innerHTML);
       playMusic(e.querySelector(".info").firstElementChild.innerHTML.trim());
     });
   });
@@ -78,10 +75,30 @@ const playMusic = (track, pause = false) => {
   document.querySelector(".songtime").innerHTML = "00:00/00:00";
 };
 
+async function displayAlbums() {
+  let a = await fetch(`http://127.0.0.1:5500/songs/`);
+  let response = await a.text();
+  let div = document.createElement("div");
+  div.innerHTML = response;
+  let anchors = div.getElementsByTagName("a");
+  Array.from(anchors).forEach(async (e) => {
+    if (e.href.includes("/songs")) {
+      let folder = e.href.split("/").slice(-2)[0];
+      //get meta data of the folder
+      let a = await fetch(`http://127.0.0.1:5500/songs/${folder}/info.json`);
+      let response = await a.json();
+      console.log(response)
+    }
+  });
+}
+
 async function main() {
   //get the list of the songs
   await getSongs("songs/ncs");
   playMusic(songs[0], true);
+
+  //display all the albums on the page
+  displayAlbums();
 
   //attach an event listner to play next and previous
 
@@ -97,7 +114,6 @@ async function main() {
 
   //listen for time update event
   currentSong.addEventListener("timeupdate", () => {
-    console.log(currentSong.currentTime, currentSong.duration);
     document.querySelector(".songtime").innerHTML = `${secondsToMinutesSeconds(
       currentSong.currentTime
     )}/${secondsToMinutesSeconds(currentSong.duration)}`;
@@ -144,15 +160,13 @@ async function main() {
     .querySelector(".range")
     .getElementsByTagName("input")[0]
     .addEventListener("change", (e) => {
-      console.log("setting volume to", e.target.value, "/100");
       currentSong.volume = parseInt(e.target.value) / 100;
     });
 
   //Load the playlist whenever the card is clicked
   Array.from(document.getElementsByClassName("card")).forEach((e) => {
     e.addEventListener("click", async (item) => {
-      console.log(item, item.currentTarget.dataset);
-      songs = await getSongs(`songs/${item.currentTarget.datasetfolder}`);
+      songs = await getSongs(`songs/${item.currentTarget.dataset.folder}`);
     });
   });
 }
