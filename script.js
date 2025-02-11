@@ -81,15 +81,22 @@ async function displayAlbums() {
   let div = document.createElement("div");
   div.innerHTML = response;
   let anchors = div.getElementsByTagName("a");
-  Array.from(anchors).forEach(async (e) => {
+
+  for (let e of anchors) {
     if (e.href.includes("/songs")) {
       let folder = e.href.split("/").slice(-2)[0];
-      //get meta data of the folder
-      let a = await fetch(`http://127.0.0.1:5500/songs/${folder}/info.json`);
-      let response = await a.json();
-      console.log(response)
+      
+      try {
+        let a = await fetch(`http://127.0.0.1:5500/songs/${folder}/info.json`);
+        if (!a.ok) throw new Error(`Could not fetch ${folder}/info.json`);
+
+        let response = await a.json();
+        console.log(response);
+      } catch (error) {
+        console.error("Error fetching JSON:", error);
+      }
     }
-  });
+  }
 }
 
 async function main() {
