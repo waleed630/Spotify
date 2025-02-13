@@ -1,6 +1,17 @@
 let currentSong = new Audio();
 let songs;
 let currFolder;
+let playbar = document.querySelector(".playbar");
+let songUL = document.querySelector(".songList").getElementsByTagName("ul")[0];
+let localurl = document.URL;
+
+window.addEventListener("load", () => {
+  playbar.style.display = "none";
+});
+
+songUL.addEventListener("click", () => {
+  playbar.style.removeProperty("display");
+});
 
 function secondsToMinutesSeconds(seconds) {
   if (isNaN(seconds) || seconds < 0) {
@@ -18,7 +29,7 @@ function secondsToMinutesSeconds(seconds) {
 
 async function getSongs(folder) {
   currFolder = folder;
-  let a = await fetch(`http://127.0.0.1:5500/${folder}/`);
+  let a = await fetch(`${localurl}${folder}/`);
   let response = await a.text();
   let div = document.createElement("div");
   div.innerHTML = response;
@@ -32,16 +43,13 @@ async function getSongs(folder) {
   }
 
   //show all the songs in the
-  let songUL = document
-    .querySelector(".songList")
-    .getElementsByTagName("ul")[0];
   songUL.innerHTML = "";
   for (const song of songs) {
     songUL.innerHTML =
       songUL.innerHTML +
       `<li>
   
-            <img class="invert" src="music.svg" alt="" />
+            <img class="invert" src="img/music.svg" alt="" />
             <div class="info">
               <div>${song.replaceAll("%20", " ")}</div>
             </div>
@@ -76,7 +84,7 @@ const playMusic = (track, pause = false) => {
 };
 
 async function displayAlbums() {
-  let a = await fetch(`http://127.0.0.1:5500/songs/`);
+  let a = await fetch(`${localurl}songs/`);
   let response = await a.text();
   let div = document.createElement("div");
   div.innerHTML = response;
@@ -88,7 +96,7 @@ async function displayAlbums() {
       let folder = e.href.split("/").slice(-1)[0];
 
       // Fetch metadata for each album
-      let meta = await fetch(`http://127.0.0.1:5500/songs/${folder}/info.json`);
+      let meta = await fetch(`${localurl}songs/${folder}/info.json`);
       let metaData = await meta.json();
 
       // Create card elements dynamically
@@ -124,8 +132,6 @@ async function displayAlbums() {
 
 async function main() {
   //get the list of the songs
-  await getSongs("songs/ncs");
-  playMusic(songs[0], true);
 
   //display all the albums on the page
   displayAlbums();
@@ -203,19 +209,18 @@ async function main() {
 
   // add event listner to mute the track
   document.querySelector(".volume>img").addEventListener("click", (e) => {
-    if (e.target.src.includes("volume.svg")){
-      e.target.src = e.target.src.replace("volume.svg","mute.svg")
-      currentSong.volume=0;
+    if (e.target.src.includes("volume.svg")) {
+      e.target.src = e.target.src.replace("volume.svg", "mute.svg");
+      currentSong.volume = 0;
       document
-    .querySelector(".range")
-    .getElementsByTagName("input")[0].value=0;
-    }
-    else{
-      e.target.src =e.target.src.replace("mute.svg","volume.svg")
-      currentSong.volume=.1;
+        .querySelector(".range")
+        .getElementsByTagName("input")[0].value = 0;
+    } else {
+      e.target.src = e.target.src.replace("mute.svg", "volume.svg");
+      currentSong.volume = 0.1;
       document
-    .querySelector(".range")
-    .getElementsByTagName("input")[0].value=10;
+        .querySelector(".range")
+        .getElementsByTagName("input")[0].value = 10;
     }
   });
 }
